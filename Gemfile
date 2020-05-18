@@ -1,4 +1,4 @@
-gem 'elasticsearch-model'
+gem 'elasticsearch-model', '~> 5.0'
 gem 'active_model_serializers', '~> 0.7.0'
 gem 'kaminari'
 gem 'ansi'

@@ -1,5 +1,11 @@
 require 'redmine'
 
+paths = Dir.glob("#{Rails.application.config.root}/plugins/redmine_elasticsearch/{lib,app/models,app/controllers}")
+
+Rails.application.config.eager_load_paths += paths
+Rails.application.config.autoload_paths += paths
+ActiveSupport::Dependencies.autoload_paths += paths
+
 Redmine::Plugin.register :redmine_elasticsearch do
   name        'Redmine Elasticsearch Plugin'
   description 'This plugin integrates the Elasticsearch full-text search engine into Redmine.'

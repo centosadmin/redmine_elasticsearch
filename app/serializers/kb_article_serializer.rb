@@ -4,7 +4,7 @@ class KbArticleSerializer < BaseSerializer
              :created_on, :updated_on,
              :tag, :category
 
-  has_many :attachments, serializer: AttachmentSerializer
+  # has_many :attachments, serializer: AttachmentSerializer
 
   def _parent
     object.try(:project_id)

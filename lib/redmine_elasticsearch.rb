@@ -3,7 +3,7 @@ require 'elasticsearch/model'
 
 module RedmineElasticsearch
   INDEX_NAME            = "#{Rails.application.class.parent_name.downcase}_#{Rails.env}"
-  BATCH_SIZE_FOR_IMPORT = 300
+  BATCH_SIZE_FOR_IMPORT = 20
 
   def type2class_name(type)
     type.to_s.underscore.classify
@@ -52,6 +52,10 @@ module RedmineElasticsearch
     client.indices.refresh
   end
 
+  def bypass_index?
+    Redmine::Configuration['elastic_search']&.fetch('bypass_index', false)
+  end
+
   extend self
 end
 
@@ -64,7 +68,8 @@ end
 require_dependency 'redmine_elasticsearch/patches/redmine_search_patch'
 require_dependency 'redmine_elasticsearch/patches/search_controller_patch'
 
-ActionDispatch::Callbacks.to_prepare do
+reloader = defined?(ActiveSupport::Reloader) ? ActiveSupport::Reloader : ActionDispatch::Reloader
+reloader.to_prepare do
   RedmineElasticsearch.apply_patch RedmineElasticsearch::Patches::RedmineSearchPatch, Redmine::Search
   RedmineElasticsearch.apply_patch RedmineElasticsearch::Patches::SearchControllerPatch, SearchController
   RedmineElasticsearch.apply_patch RedmineElasticsearch::Patches::ResponseResultsPatch, Elasticsearch::Model::Response::Results

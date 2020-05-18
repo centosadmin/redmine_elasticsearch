@@ -24,6 +24,8 @@ module Workers
     end
 
     def perform(options)
+      return if RedmineElasticsearch.bypass_index?
+
       id, type = options.with_indifferent_access[:id], options.with_indifferent_access[:type]
       id.nil? ? update_class_index(type) : update_instance_index(type, id)
     end
